@@ -5,7 +5,10 @@ import {
   Route,
   Redirect,
 } from 'react-router-dom';
-function App() {
+import LoginPage from './pages/LoginPage';
+import HomePage from './pages/HomePage';
+
+const App = () => {
   const isLoggedIn = false;
   return (
     <div className="App">
@@ -13,17 +16,17 @@ function App() {
         <Switch>
           {isLoggedIn && (
             <Route path="/">
-              <div>Home page</div>
+              <HomePage />
             </Route>
           )}
           <Route path="/login">
-            <div>Heres login page</div>
+            <LoginPage />
           </Route>
           <Redirect from="/" to="/login" />
         </Switch>
       </Router>
     </div>
   );
-}
+};
 
 export default App;
