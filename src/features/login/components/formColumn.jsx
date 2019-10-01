@@ -1,6 +1,5 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
+import { Button, TextField } from '@material-ui/core';
 import './columns.scss';
 
 const FormColumn = ({
@@ -10,12 +9,14 @@ const FormColumn = ({
   setUsername,
   setPassword,
   isSubmitDisabled,
+  hasError,
+  clearError,
 }) => {
   return (
     <div className="login-page-form-column">
       <h1>Sign Up</h1>
 
-      <form onSubmit={onSubmitLogin}>
+      <form onSubmit={onSubmitLogin} error>
         <TextField
           label="Username"
           name="username"
@@ -23,7 +24,10 @@ const FormColumn = ({
           required
           variant="outlined"
           value={username}
-          onChange={e => setUsername(e.target.value)}
+          onChange={e => {
+            setUsername(e.target.value);
+            clearError();
+          }}
         />
         <TextField
           label="Password"
@@ -32,8 +36,14 @@ const FormColumn = ({
           required
           variant="outlined"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={e => {
+            setPassword(e.target.value);
+            clearError();
+          }}
         />
+        <p className="form-error-message">
+          &nbsp; {hasError && `Wrong credentials!`}
+        </p>
         <Button type="submit" disabled={isSubmitDisabled} variant="contained">
           Login
         </Button>

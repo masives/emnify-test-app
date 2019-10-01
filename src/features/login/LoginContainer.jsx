@@ -18,9 +18,12 @@ export const login = authToken => {
 const LoginContainer = ({ setAuthToken, history }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [hasError, setHasError] = useState(false);
 
   const isSubmitDisabled = !Boolean(username) || !Boolean(password);
-
+  const clearError = () => {
+    setHasError(false);
+  };
   const onSubmitLogin = async e => {
     e.preventDefault();
     try {
@@ -33,10 +36,11 @@ const LoginContainer = ({ setAuthToken, history }) => {
       );
       const authToken = response.data.auth_token;
       login(authToken);
+      // this set's the root level token that is used as a way to check if user is logged in
       setAuthToken(authToken);
       history.push('/');
-    } catch (error) {
-      // todo add error handling
+    } catch (hasError) {
+      setHasError(true);
     }
   };
   return (
@@ -49,6 +53,8 @@ const LoginContainer = ({ setAuthToken, history }) => {
         setUsername={setUsername}
         setPassword={setPassword}
         isSubmitDisabled={isSubmitDisabled}
+        hasError={hasError}
+        clearError={clearError}
       />
     </div>
   );
