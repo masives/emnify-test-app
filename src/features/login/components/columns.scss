@@ -38,8 +38,12 @@
     flex-direction: column;
     max-width: 400px;
 
-    > div {
+    > :first-child {
       margin-bottom: 20px;
+    }
+    .form-error-message {
+      margin-top: 0;
+      color: #c00;
     }
   }
 
