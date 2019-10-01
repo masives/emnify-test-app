@@ -1,9 +1,30 @@
 import React from 'react';
-const EndpointList = ({ isLoading, endpoints }) => {
-  if (isLoading) return <div>Loading...</div>;
+import PaginatedTable from '../../components/PaginatedTable';
+import Paper from '@material-ui/core/Paper';
+import './index.scss';
 
-  const endpointElements = endpoints.map(e => <div>{e.name}</div>);
-  return <>{endpointElements}</>;
+const EndpointList = ({
+  isLoading,
+  endpoints,
+  page,
+  setPage,
+  rowsPerPage,
+  setRowsPerPage,
+  count,
+}) => {
+  if (isLoading) return <div>Loading...</div>;
+  return (
+    <div className="endpoint-list">
+      <PaginatedTable
+        rows={endpoints}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        setPage={setPage}
+        setRowsPerPage={setRowsPerPage}
+        count={count}
+      />
+    </div>
+  );
 };
 
 export default EndpointList;
