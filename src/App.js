@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -9,7 +9,7 @@ import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 
 const App = () => {
-  const isLoggedIn = false;
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   return (
     <div className="App">
       <Router>
@@ -20,7 +20,7 @@ const App = () => {
             </Route>
           )}
           <Route path="/login">
-            <LoginPage />
+            <LoginPage setIsLoggedIn={setIsLoggedIn} />
           </Route>
           <Redirect from="/" to="/login" />
         </Switch>
