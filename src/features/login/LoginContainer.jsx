@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import sha1 from 'js-sha1';
 import { withRouter } from 'react-router-dom';
