@@ -1,6 +1,64 @@
-import React from 'react';
-const LoginContainer = () => {
-  return <div>Login container</div>;
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import sha1 from 'js-sha1';
+import { withRouter } from 'react-router-dom';
+
+import TextColumn from './components/textColumn';
+import FormColumn from './components/formColumn';
+import './LoginContainer.scss';
+
+const AUTH_TOKEN_KEY = 'authToken';
+
+const LoginContainer = ({ setIsLoggedIn, history }) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const login = authToken => {
+    // add token, enable logged in view and redirect
+    axios.defaults.headers.common['authorization'] = `Bearer ${authToken}`;
+    window.localStorage.setItem(AUTH_TOKEN_KEY, authToken);
+    setIsLoggedIn(true);
+    history.push('/');
+  };
+
+  useEffect(() => {
+    const authToken = window.localStorage.getItem(AUTH_TOKEN_KEY);
+    if (authToken) {
+      login(authToken);
+    }
+  });
+
+  const isSubmitDisabled = !Boolean(username) || !Boolean(password);
+
+  const onSubmitLogin = async e => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        'https://cdn.emnify.net/api/v1/authenticate',
+        {
+          username,
+          password: sha1(password),
+        },
+      );
+      const authToken = response.data.auth_token;
+      login(authToken);
+    } catch (error) {
+      // todo add error handling
+    }
+  };
+  return (
+    <div className="login-page">
+      <TextColumn />
+      <FormColumn
+        onSubmitLogin={onSubmitLogin}
+        username={username}
+        password={password}
+        setUsername={setUsername}
+        setPassword={setPassword}
+        isSubmitDisabled={isSubmitDisabled}
+      />
+    </div>
+  );
 };
 
-export default LoginContainer;
+export default withRouter(LoginContainer);
