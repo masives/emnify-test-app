@@ -7,26 +7,17 @@ import TextColumn from './components/textColumn';
 import FormColumn from './components/formColumn';
 import './LoginContainer.scss';
 
-const AUTH_TOKEN_KEY = 'authToken';
+export const AUTH_TOKEN_KEY = 'authToken';
 
-const LoginContainer = ({ setIsLoggedIn, history }) => {
+export const login = authToken => {
+  // add token, enable logged in view and redirect
+  axios.defaults.headers.common['authorization'] = `Bearer ${authToken}`;
+  window.localStorage.setItem(AUTH_TOKEN_KEY, authToken);
+};
+
+const LoginContainer = ({ setAuthToken, history }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
-  const login = authToken => {
-    // add token, enable logged in view and redirect
-    axios.defaults.headers.common['authorization'] = `Bearer ${authToken}`;
-    window.localStorage.setItem(AUTH_TOKEN_KEY, authToken);
-    setIsLoggedIn(true);
-    history.push('/');
-  };
-
-  useEffect(() => {
-    const authToken = window.localStorage.getItem(AUTH_TOKEN_KEY);
-    if (authToken) {
-      login(authToken);
-    }
-  });
 
   const isSubmitDisabled = !Boolean(username) || !Boolean(password);
 
@@ -42,6 +33,8 @@ const LoginContainer = ({ setIsLoggedIn, history }) => {
       );
       const authToken = response.data.auth_token;
       login(authToken);
+      setAuthToken(authToken);
+      history.push('/');
     } catch (error) {
       // todo add error handling
     }

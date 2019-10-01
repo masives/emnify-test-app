@@ -1,8 +1,8 @@
 import React from 'react';
 import LoginContainer from '../features/login/LoginContainer';
 
-const LoginPage = ({ setIsLoggedIn }) => {
-  return <LoginContainer setIsLoggedIn={setIsLoggedIn} />;
+const LoginPage = ({ setAuthToken }) => {
+  return <LoginContainer setAuthToken={setAuthToken} />;
 };
 
 export default LoginPage;

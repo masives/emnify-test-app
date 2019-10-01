@@ -19,7 +19,7 @@ const FormColumn = ({
         <TextField
           label="Username"
           name="username"
-          autoFasdocus
+          autoFocus
           required
           variant="outlined"
           value={username}
