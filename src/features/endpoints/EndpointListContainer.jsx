@@ -1,119 +1,57 @@
 import React, { useEffect, useState } from 'react';
 import EndpointList from './EndpointList';
-
 import axios from 'axios';
 
-const getEndpoints = async () => {
+const normalizeResult = e => ({
+  id: e.id,
+  name: e.name,
+  isSim: !!e.sim,
+  iccid: e.sim && e.sim.iccid,
+  msisdn: e.sim && e.sim.msisdn,
+  ip: e.ip_address,
+  imei: e.imei,
+  imeiLock: e.imei_lock,
+  serviceProfile: e.service_profile && e.service_profile.name,
+  tariffProfile: e.tariff_profile && e.tariff_profile.name,
+  tags: e.tags,
+  statusDescription: e.status && e.status.description,
+});
+
+const getEndpoints = async (page, rowsPerPage) => {
   const result = await axios
-    .get('https://cdn.emnify.net/api/v1/endpoint')
+    .get('https://cdn.emnify.net/api/v1/endpoint', {
+      params: {
+        page: page + 1,
+        per_page: rowsPerPage,
+      },
+    })
     .then(res => {
-      console.log(res);
-      return res.data;
+      return {
+        data: res.data.map(normalizeResult),
+        count: Number(res.headers['x-total-count']),
+      };
     });
   return result;
   // 'x-total-count' from headers
 };
 
-const getEndpointsMockup = (page, rowsPerPage) => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      const data = [
-        {
-          id: 9282920,
-          name: 'LG G6',
-          tags: null,
-          created: '2019-02-07T15:59:24.000+0000',
-          last_updated: '2019-09-11T13:50:48.000+0000',
-          status: { id: 0, description: 'Enabled' },
-          service_profile: { id: 71305, name: 'Generic Service Profile' },
-          tariff_profile: { id: 70535, name: 'Generic Tariff Profile' },
-          sim: {
-            id: 332733,
-            iccid: '8988303000000121462',
-            imsi: '295050999816476',
-            msisdn: '423663950010976',
-          },
-          imei: '',
-          ip_address: '10.197.128.1',
-          ip_address_space: { id: 881 },
-          imei_lock: false,
-        },
-        {
-          id: 9329109,
-          name: 'Test EP',
-          tags: null,
-          created: '2019-03-21T18:40:13.000+0000',
-          last_updated: '2019-05-13T13:41:11.000+0000',
-          status: { id: 0, description: 'Enabled' },
-          service_profile: { id: 71305, name: 'Generic Service Profile' },
-          tariff_profile: { id: 70535, name: 'Generic Tariff Profile' },
-          imei: null,
-          ip_address: '10.197.128.2',
-          ip_address_space: { id: 881 },
-          imei_lock: false,
-        },
-        {
-          id: 9460064,
-          name: 'Horst Tracker',
-          tags: 'GPS Tracker',
-          created: '2019-05-13T15:09:31.000+0000',
-          last_updated: '2019-09-30T15:09:25.000+0000',
-          status: { id: 0, description: 'Enabled' },
-          service_profile: { id: 71305, name: 'Generic Service Profile' },
-          tariff_profile: { id: 70535, name: 'Generic Tariff Profile' },
-          sim: {
-            id: 778823,
-            iccid: '8988303000000285551',
-            imsi: '295050999198004',
-            msisdn: '423663910029064',
-          },
-          imei: '3593390754121278',
-          ip_address: '10.197.128.3',
-          ip_address_space: { id: 881 },
-          imei_lock: true,
-        },
-        {
-          id: 9759551,
-          name: 'test',
-          tags: null,
-          created: '2019-10-01T08:51:32.000+0000',
-          last_updated: '2019-10-01T08:51:32.000+0000',
-          status: { id: 0, description: 'Enabled' },
-          service_profile: { id: 302788, name: 'Test' },
-          tariff_profile: { id: 277383, name: 'Test TP' },
-          imei: null,
-          ip_address: '10.197.128.4',
-          ip_address_space: { id: 881 },
-          imei_lock: false,
-        },
-      ];
-      const first = page * rowsPerPage;
-      const slicedData = data.slice(first, first + rowsPerPage);
-      console.log(slicedData);
-      return resolve({
-        total: 16,
-        data: slicedData,
-      });
-    }, 1000);
-  });
-};
-
 const EndpointListContainer = () => {
-  const [endpoints, setEndpoints] = useState([{ name: 'testEndpointName' }]);
-  const [isLoading, setLoading] = useState(false);
+  const [endpoints, setEndpoints] = useState([]);
+  const [isLoading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
-  const [total, setTotal] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(2);
+  const [count, setCount] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     (async () => {
-      setLoading(true);
-      const result = await getEndpointsMockup(page, rowsPerPage);
+      const result = await getEndpoints(page, rowsPerPage);
       setEndpoints(result.data);
-      setTotal(result.total);
+      setCount(result.count);
       setLoading(false);
     })();
-  }, []);
+  }, [page, rowsPerPage]);
+
+  console.log(endpoints);
 
   return (
     <EndpointList
@@ -123,7 +61,7 @@ const EndpointListContainer = () => {
       rowsPerPage={rowsPerPage}
       setPage={setPage}
       setRowsPerPage={setRowsPerPage}
-      count={total}
+      count={count}
     />
   );
 };

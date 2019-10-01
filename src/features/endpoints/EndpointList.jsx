@@ -1,5 +1,5 @@
 import React from 'react';
-import PaginatedTable from '../../components/PaginatedTable';
+import PaginatedTable from './PaginatedTable';
 import Paper from '@material-ui/core/Paper';
 import './index.scss';
 
@@ -14,7 +14,7 @@ const EndpointList = ({
 }) => {
   if (isLoading) return <div>Loading...</div>;
   return (
-    <div className="endpoint-list">
+    <div className={'endpoint-list'}>
       <PaginatedTable
         rows={endpoints}
         page={page}

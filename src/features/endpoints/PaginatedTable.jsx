@@ -12,11 +12,26 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 
 const headCells = [
-  { id: 'id', numeric: false, disablePadding: true, label: 'ID' },
+  { id: 'status', numeric: false, disablePadding: false, label: 'ID' },
+  { id: 'id', numeric: false, disablePadding: false, label: 'Status' },
   { id: 'name', numeric: false, disablePadding: false, label: 'Name' },
-  { id: 'iccid', numeric: true, disablePadding: false, label: 'ICCID' },
-  { id: 'msisdn', numeric: true, disablePadding: false, label: 'MSISDN' },
-  { id: 'ip', numeric: true, disablePadding: false, label: 'IP' },
+  { id: 'iccid', numeric: false, disablePadding: false, label: 'ICCID' },
+  { id: 'msisdn', numeric: false, disablePadding: false, label: 'MSISDN' },
+  { id: 'ip', numeric: false, disablePadding: false, label: 'IP' },
+  { id: 'imeiLock', numeric: false, disablePadding: false, label: 'Lock' },
+  { id: 'imei', numeric: false, disablePadding: false, label: 'IMEI' },
+  {
+    id: 'serviceProfile',
+    numeric: false,
+    disablePadding: false,
+    label: 'Service Profile',
+  },
+  {
+    id: 'tariffProfile',
+    numeric: false,
+    disablePadding: false,
+    label: 'Tariff Profile',
+  },
 ];
 
 function PaginatedTableHeader(props) {
@@ -24,14 +39,14 @@ function PaginatedTableHeader(props) {
 
   return (
     <TableHead>
-      <TableRow>
+      <TableRow className={'desktop'}>
         {headCells.map(headCell => (
           <TableCell
             key={headCell.id}
             align={headCell.numeric ? 'right' : 'left'}
             padding={headCell.disablePadding ? 'none' : 'default'}
           >
-            {headCell.id}
+            {headCell.label}
           </TableCell>
         ))}
       </TableRow>
@@ -72,7 +87,7 @@ const EnhancedTableToolbar = props => {
   return (
     <Toolbar
       className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0,
+        [classes.highlight]: numSelected > 10,
       })}
     >
       <div className={classes.title}>
@@ -94,7 +109,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
   },
   table: {
-    minWidth: 750,
+    minWidth: 320,
   },
   tableWrapper: {
     overflowX: 'auto',
@@ -112,7 +127,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const PaginatedTable = ({
+const EndpointTable = ({
   rows,
   page,
   rowsPerPage,
@@ -121,8 +136,6 @@ const PaginatedTable = ({
   count,
 }) => {
   const classes = useStyles();
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
 
   const handleClick = (event, name) => {
@@ -144,7 +157,17 @@ const PaginatedTable = ({
   const isSelected = name => selected.indexOf(name) !== -1;
 
   const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+    rowsPerPage - Math.min(rowsPerPage, count - page * rowsPerPage);
+
+  const createMobileElement = (label, value) => (
+    <p className={'mobile-data-row'}>
+      <span className="MuiTableCell-head">{label}</span>
+      <br />
+      {value}
+    </p>
+  );
+
+  console.log({ rows });
 
   return (
     <div className={classes.root}>
@@ -157,11 +180,25 @@ const PaginatedTable = ({
               aria-labelledby="tableTitle"
               size="medium"
             >
+              <TablePagination
+                className="mobile"
+                rowsPerPageOptions={[2, 5, 10, 25]}
+                component="div"
+                count={count}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                backIconButtonProps={{
+                  'aria-label': 'previous page',
+                }}
+                nextIconButtonProps={{
+                  'aria-label': 'next page',
+                }}
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+              />
               <PaginatedTableHeader
                 classes={classes}
                 numSelected={selected.length}
-                order={order}
-                orderBy={orderBy}
                 rowCount={rows.length}
               />
               <TableBody>
@@ -170,32 +207,57 @@ const PaginatedTable = ({
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
-                    <TableRow
-                      hover
-                      onClick={event => handleClick(event, row.name)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.name}
-                      selected={isItemSelected}
-                    >
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="none"
+                    <>
+                      <TableRow
+                        className="desktop"
+                        hover
+                        onClick={event => handleClick(event, row.name)}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.id}
+                        selected={isItemSelected}
                       >
-                        {row.name}
-                      </TableCell>
-                      <TableCell align="right">{row.id}</TableCell>
-                      <TableCell align="right">{row.name}</TableCell>
-                      <TableCell align="right">
-                        {row.sim && row.sim.iccid}
-                      </TableCell>
-                      <TableCell align="right">
-                        {row.sim && row.sim.msisdn}
-                      </TableCell>
-                    </TableRow>
+                        <TableCell align="left">{row.id}</TableCell>
+                        <TableCell align="left">
+                          {row.statusDescription}
+                        </TableCell>
+                        <TableCell align="left">{row.name}</TableCell>
+                        <TableCell align="left">{row.iccid}</TableCell>
+                        <TableCell align="left">{row.msisdn}</TableCell>
+                        <TableCell align="left">{row.ip}</TableCell>
+                        <TableCell align="left">
+                          {row.imeiLock ? 'lock' : ''}
+                        </TableCell>
+                        <TableCell align="left">{row.imei}</TableCell>
+                        <TableCell align="left">{row.serviceProfile}</TableCell>
+                        <TableCell align="left">{row.tariffProfile}</TableCell>
+                      </TableRow>
+                      <TableRow
+                        className="mobile"
+                        hover
+                        onClick={event => handleClick(event, row.name)}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={'m' + row.id}
+                        selected={isItemSelected}
+                      >
+                        <TableCell align="left">
+                          {createMobileElement('Status', row.statusDescription)}
+                          {createMobileElement('Name', row.name)}
+                          {createMobileElement(
+                            'Sim Attached',
+                            row.isSim ? 'yes' : 'no',
+                          )}
+                          {createMobileElement(
+                            'IMEI Locked',
+                            row.imeiLock ? 'yes' : 'no',
+                          )}
+                          {createMobileElement('Tags', row.tags)}
+                        </TableCell>
+                      </TableRow>
+                    </>
                   );
                 })}
                 {emptyRows > 0 && (
@@ -207,7 +269,7 @@ const PaginatedTable = ({
             </Table>
           </div>
           <TablePagination
-            rowsPerPageOptions={[2, 5, 10, 25]}
+            rowsPerPageOptions={[5, 10, 25]}
             component="div"
             count={count}
             rowsPerPage={rowsPerPage}
@@ -227,4 +289,4 @@ const PaginatedTable = ({
   );
 };
 
-export default PaginatedTable;
+export default EndpointTable;

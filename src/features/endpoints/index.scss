@@ -1,7 +1,27 @@
+@import '../../styles/variables.scss';
+
 .endpoint-list {
-  margin: 0 5rem 0;
+  margin: -20vh 5rem 0;
 
   .paginated-table {
     padding: 20px;
+
+    .desktop {
+      display: table-row;
+    }
+
+    .mobile {
+      display: none;
+    }
+
+    @media (max-width: $breakpoint-tablet) {
+      .desktop {
+        display: none;
+      }
+
+      .mobile {
+        display: table-row;
+      }
+    }
   }
 }
