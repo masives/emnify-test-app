@@ -1,0 +1,11 @@
+@import '../../styles/variables.scss';
+
+.login-page {
+  display: flex;
+
+  @media (max-width: $breakpoint-tablet) {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+  }
+}
