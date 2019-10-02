@@ -1,0 +1,59 @@
+@import '../../../styles/variables.scss';
+
+.login-page-text-column {
+  width: 40%;
+  background: #263238;
+  color: #fff;
+  min-height: 100vh;
+  padding-top: 200px;
+  font-size: 30px;
+  padding-right: 40px;
+
+  @media (max-width: $breakpoint-tablet) {
+    min-height: unset;
+    width: 100%;
+    padding: 60px 40px 0;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+
+    svg {
+      color: #50e2b6;
+      height: 40px;
+      width: 40px;
+      margin-right: 20px;
+    }
+  }
+}
+
+.login-page-form-column {
+  width: 60%;
+  padding: 180px 100px 0;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+
+    > :first-child {
+      margin-bottom: 20px;
+    }
+    .form-error-message {
+      margin-top: 0;
+      color: #c00;
+    }
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    width: 100%;
+    padding: 80px 40px;
+    text-align: center;
+
+    form {
+      margin: 0 auto;
+    }
+  }
+}
