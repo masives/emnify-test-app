@@ -9,12 +9,12 @@ const FormColumn = ({
   setUsername,
   setPassword,
   isSubmitDisabled,
-  hasError,
+  errorMessage,
   clearError,
 }) => {
   return (
     <div className="login-page-form-column">
-      <h1>Sign Up</h1>
+      <h1>Log in</h1>
 
       <form onSubmit={onSubmitLogin} error>
         <TextField
@@ -42,7 +42,7 @@ const FormColumn = ({
           }}
         />
         <p className="form-error-message">
-          &nbsp; {hasError && `Wrong credentials!`}
+          &nbsp; {Boolean(errorMessage) && errorMessage}
         </p>
         <Button type="submit" disabled={isSubmitDisabled} variant="contained">
           Login
